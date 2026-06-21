@@ -281,7 +281,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--cream);
 .scene-4{background:linear-gradient(160deg,#07070D 0%,#090A14 100%);}
 
 .finale-inner{text-align:center;position:relative;z-index:2;}
-.finale-inner h2{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,8vw,52px);margin-bottom:10px;color:var(--cream);}
+.finale-inner h2{ font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,8vw,52px);margin-bottom:10px;color:var(--cream);word-break:keep-all;overflow-wrap:normal;padding:0 8px;/* kasih napas kiri-kanan */}
 .finale-inner p{font-size:clamp(14px,3.5vw,16px);color:var(--muted);margin-bottom:28px;max-width:300px;line-height:1.6;}
 
 .btn-main{
@@ -426,7 +426,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--cream);
       <img src="https://i.imgur.com/dit27Gp.jpeg" alt="cat">
     </div>
     <div class="finale-inner">
-      <h2>Met ultah<br>Sayang!🤭 🎉</h2>
+      <h2>Met ultah<br>Sayang! 🤭🎉</h2>
       <p>Semoga hari ini jadi yang paling berkesan</p>
       <button class="btn-main" id="confettiBtn">Rayakan Lagi 🎊</button>
       <button class="btn-ghost" id="resetBtn">↩ Ulangi dari Awal</button>
@@ -561,24 +561,32 @@ function burstCards(){
 // ── FLOATING CARDS SCENE 1 ──
 function spawnFloatingCards(){
   const container=document.getElementById('floatCards');
+  const isMobile=window.innerWidth<=600;
   const items=[
-    {emoji:'🎂',w:52,h:60,x:'8%',y:'15%',rot:'-8deg',dur:'5.5s',delay:'0s',tx1:'8px',ty1:'-14px',rot1:'3deg',tx2:'-5px',ty2:'10px',rot2:'-5deg'},
-    {emoji:'🎉',w:46,h:54,x:'78%',y:'10%',rot:'6deg',dur:'4.8s',delay:'.4s',tx1:'-6px',ty1:'-10px',rot1:'-4deg',tx2:'4px',ty2:'8px',rot2:'3deg'},
-    {emoji:'💙',w:44,h:50,x:'85%',y:'65%',rot:'-4deg',dur:'6.2s',delay:'.8s',tx1:'5px',ty1:'-12px',rot1:'5deg',tx2:'-6px',ty2:'9px',rot2:'-3deg'},
-    {emoji:'⭐',w:48,h:55,x:'5%',y:'62%',rot:'7deg',dur:'5.1s',delay:'.2s',tx1:'-7px',ty1:'-10px',rot1:'-5deg',tx2:'5px',ty2:'12px',rot2:'4deg'},
-    {emoji:'🎈',w:42,h:48,x:'50%',y:'5%',rot:'-5deg',dur:'4.5s',delay:'1s',tx1:'6px',ty1:'-14px',rot1:'4deg',tx2:'-4px',ty2:'8px',rot2:'-4deg'},
-    {emoji:'✨',w:40,h:46,x:'15%',y:'38%',rot:'4deg',dur:'5.8s',delay:'.6s',tx1:'-5px',ty1:'-12px',rot1:'-3deg',tx2:'6px',ty2:'10px',rot2:'5deg'},
+    {emoji:'🎂',w:52,h:60,x:'8%', y:'15%',rot:'-8deg',dur:'5.5s',delay:'0s', tx1:'8px', ty1:'-14px',rot1:'3deg', tx2:'-5px',ty2:'10px', rot2:'-5deg'},
+    {emoji:'🎉',w:46,h:54,x:'78%',y:'10%',rot:'6deg', dur:'4.8s',delay:'.4s',tx1:'-6px',ty1:'-10px',rot1:'-4deg',tx2:'4px', ty2:'8px',  rot2:'3deg'},
+    {emoji:'💙',w:44,h:50,x:'85%',y:'65%',rot:'-4deg',dur:'6.2s',delay:'.8s',tx1:'5px', ty1:'-12px',rot1:'5deg', tx2:'-6px',ty2:'9px',  rot2:'-3deg'},
+    {emoji:'⭐',w:48,h:55,x:'5%', y:'62%',rot:'7deg', dur:'5.1s',delay:'.2s',tx1:'-7px',ty1:'-10px',rot1:'-5deg',tx2:'5px', ty2:'12px', rot2:'4deg'},
+    {emoji:'🎈',w:42,h:48,x:'50%',y:'5%', rot:'-5deg',dur:'4.5s',delay:'1s', tx1:'6px', ty1:'-14px',rot1:'4deg', tx2:'-4px',ty2:'8px',  rot2:'-4deg'},
+    {emoji:'✨',w:40,h:46,x:'6%', y:'22%',rot:'4deg', dur:'5.8s',delay:'.6s',tx1:'-5px',ty1:'-12px',rot1:'-3deg',tx2:'6px', ty2:'10px', rot2:'5deg'},
   ];
+
+  // Di mobile, hanya tampilkan kartu yang ada di pojok (jauh dari teks tengah)
+  const safeOnMobile=['🎂','🎉','💙','⭐']; // pojok: tl, tr, br, bl
+
   items.forEach(item=>{
+    if(isMobile && !safeOnMobile.includes(item.emoji)) return;
     const d=document.createElement('div');
     d.className='fcard alive';
+    const size=isMobile ? Math.round(parseInt(item.w)*.72) : parseInt(item.w);
+    const sizeH=isMobile ? Math.round(parseInt(item.h)*.72) : parseInt(item.h);
     d.style.cssText=`
-      width:${item.w}px;height:${item.h}px;
+      width:${size}px;height:${sizeH}px;
       left:${item.x};top:${item.y};
       --rot0:${item.rot};--dur:${item.dur};--delay:${item.delay};
       --tx1:${item.tx1};--ty1:${item.ty1};--rot1:${item.rot1};
       --tx2:${item.tx2};--ty2:${item.ty2};--rot2:${item.rot2};
-      font-size:${parseInt(item.w)*.55}px;
+      font-size:${size*.55}px;
       opacity:1;
     `;
     d.textContent=item.emoji;
